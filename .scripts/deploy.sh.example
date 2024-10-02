@@ -16,7 +16,7 @@ function send_telegram_alert {
 
 function error_exit {
     local message="$1"
-    send_telegram_alert "🔴 Deployment failed: $message - $APP_NAME"
+    send_telegram_alert "🔴 Deployment failed: $message"
     exit 1
 }
 
