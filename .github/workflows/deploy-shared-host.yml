@@ -14,10 +14,10 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.HOST_SHARED_HOST }}
+          username: ${{ secrets.USERNAME_SHARED_HOST }}
+          key: ${{ secrets.SSHKEY_SHARED_HOST }}
+          port: ${{ secrets.PORT_SHARED_HOST }}
           script: |
             echo "Current branch ref: ${{ github.ref }}"
             DEPLOY_PATH="${{ secrets.DEPLOY_PATH_SHARED_HOST }}"
