@@ -17,6 +17,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.SSHKEYPASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
             echo "Current branch ref: ${{ github.ref }}"
