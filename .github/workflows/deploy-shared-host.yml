@@ -1,0 +1,25 @@
+name: Deploy to Shared Hosting
+
+on:
+  push:
+    branches: ["shared-host"]
+  pull_request:
+    branches: ["shared-host"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            echo "Current branch ref: ${{ github.ref }}"
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH_SHARED_HOST }}"
+            echo "Deploying to $DEPLOY_PATH"
+            cd $DEPLOY_PATH && ./.scripts/deploy.sh
