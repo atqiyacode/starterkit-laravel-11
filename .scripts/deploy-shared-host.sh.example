@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e
+
+APP_NAME="Laravel Starter Kit - Shared Hosting"
+BRANCH="shared-host"
+# Replace these with your bot token and chat ID
+TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
+TELEGRAM_CHAT_ID="<YOUR_CHAT_ID>"
+
+function send_telegram_alert {
+    local message="$1"
+    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+    -d chat_id="$TELEGRAM_CHAT_ID" \
+    -d text="$message - $APP_NAME"
+}
+
+function error_exit {
+    local message="$1"
+    send_telegram_alert "🔴 Deployment failed: $message - $APP_NAME"
+    exit 1
+}
+
+echo "✅ Deploying Application ..."
+
+# Enter maintenance mode
+if php artisan down; then
+    echo "✅ Application is now in maintenance mode."
+else
+    error_exit "🚨 Failed to enter maintenance mode."
+fi
+
+# Update codebase
+if git pull origin $BRANCH; then
+    echo "✅ Codebase updated from $BRANCH."
+else
+    error_exit "🚨 Failed to update codebase."
+fi
+
+# Install dependencies
+if composer install --no-interaction --prefer-dist --optimize-autoloader; then
+    echo "✅ Composer dependencies installed."
+else
+    error_exit "🚨 Failed to install composer dependencies."
+fi
+
+# Exit maintenance mode
+if php artisan up; then
+    echo "✅ Application is now live."
+else
+    error_exit "🚨 Failed to exit maintenance mode."
+fi
+
+# Send success alert
+send_telegram_alert "🟢 Deployment succeeded. The application is now live."
+
+echo "✅ Application Deployed Successfully"
